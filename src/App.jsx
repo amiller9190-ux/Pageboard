@@ -9,19 +9,22 @@ import ProjectSetup from './components/ProjectSetup';
 import StoryTemplateWizard from './components/StoryTemplateWizard';
 import CharacterManager from './components/CharacterManager';
 import InteractiveAudioEngine from './components/InteractiveAudioEngine';
+import ParentalSecurityGate from './components/ParentalSecurityGate';
 
 const TABS = [
   { key: 'editor', label: 'Editor' },
   { key: 'checklist', label: 'Checklist' },
   { key: 'templates', label: 'Templates' },
-  { key: 'validator', label: 'Validator' },
+  { key: 'validator', label: 'Validator', gated: true },
   { key: 'audio', label: 'Audio' },
   { key: 'characters', label: 'Characters' },
-  { key: 'settings', label: 'Settings' },
+  { key: 'settings', label: 'Settings', gated: true },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('editor');
+  const [gatePassed, setGatePassed] = useState(false);
+  const [pendingGatedTab, setPendingGatedTab] = useState(null);
 
   const {
     project,
@@ -50,6 +53,24 @@ export default function App() {
       </div>
     );
   }
+
+  const handleTabClick = (tab) => {
+    if (tab.gated && !gatePassed) {
+      setPendingGatedTab(tab.key);
+    } else {
+      setActiveTab(tab.key);
+    }
+  };
+
+  const handleGatePass = () => {
+    setGatePassed(true);
+    setActiveTab(pendingGatedTab);
+    setPendingGatedTab(null);
+  };
+
+  const handleGateCancel = () => {
+    setPendingGatedTab(null);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -122,7 +143,7 @@ export default function App() {
             {TABS.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => handleTabClick(tab)}
                 className={`px-4 py-3 text-sm font-medium transition-colors duration-200 border-b-2 whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'text-brand-gold border-brand-gold'
@@ -130,6 +151,9 @@ export default function App() {
                 }`}
               >
                 {tab.label}
+                {tab.gated && !gatePassed && (
+                  <span className="ml-1 text-xs opacity-50">🔒</span>
+                )}
               </button>
             ))}
           </div>
@@ -146,6 +170,11 @@ export default function App() {
           onUpdateOracleTargetCards={updateOracleTargetCards}
         />
       </div>
+
+      {/* Parental Security Gate — blocks gated tabs until math challenge passed */}
+      {pendingGatedTab && (
+        <ParentalSecurityGate onGatePass={handleGatePass} />
+      )}
     </div>
   );
 }
