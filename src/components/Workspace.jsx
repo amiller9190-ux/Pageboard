@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import DynamicDialogueScript from './DynamicDialogueScript';
 import {
   ILLUSTRATION_STATUSES,
   ILLUSTRATION_STATUS_LABELS,
@@ -37,6 +37,13 @@ export default function Workspace({ page, onUpdate }) {
   const cycleStatus = () => {
     const nextIndex = (currentStatusIndex + 1) % ILLUSTRATION_STATUSES.length;
     onUpdate({ illustrationStatus: ILLUSTRATION_STATUSES[nextIndex] });
+  };
+
+  const handleInsertDialogue = (dialogueText) => {
+    const updatedText = page.textContent
+      ? page.textContent + '\n\n' + dialogueText
+      : dialogueText;
+    onUpdate({ textContent: updatedText });
   };
 
   return (
@@ -95,6 +102,12 @@ export default function Workspace({ page, onUpdate }) {
             {visualWordCount} {visualWordCount === 1 ? 'word' : 'words'}
           </p>
         </div>
+
+        {/* Dynamic Dialogue Script Generator */}
+        <DynamicDialogueScript
+          characters={page.characters || null}
+          onInsert={handleInsertDialogue}
+        />
       </div>
     </main>
   );
