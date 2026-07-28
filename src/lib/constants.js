@@ -71,6 +71,18 @@ export const WORD_COUNT_THRESHOLDS = {
 export const STANDARD_PAGE_COUNTS = [24, 32, 40];
 
 /**
+ * Character role options.
+ */
+export const CHARACTER_ROLES = [
+  'Protagonist',
+  'Antagonist',
+  'Sidekick',
+  'Supporting',
+  'Narrator',
+  'Other',
+];
+
+/**
  * Default project metadata.
  */
 export const DEFAULT_METADATA = {

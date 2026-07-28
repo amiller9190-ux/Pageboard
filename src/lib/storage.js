@@ -39,7 +39,8 @@ function createDefaultProject() {
     },
   };
   const pages = [];
-  return { metadata, pages };
+  const characters = [];
+  return { metadata, pages, characters };
 }
 
 /**
@@ -64,6 +65,10 @@ export function getProject() {
     }
     if (parsed.metadata.oracleTargetCards == null) {
       parsed.metadata.oracleTargetCards = DEFAULT_METADATA.oracleTargetCards;
+    }
+    // Ensure characters array exists (migration)
+    if (!Array.isArray(parsed.characters)) {
+      parsed.characters = [];
     }
     return parsed;
   } catch {
@@ -143,4 +148,73 @@ export function reorderPages(project, newOrder) {
     .filter(Boolean)
     .map((p, i) => ({ ...p, pageNumber: i + 1, updatedAt: new Date().toISOString() }));
   return { ...project, pages: reordered };
+}
+
+/**
+ * Adds a new page with optional data overrides.
+ * @param {object} project
+ * @param {object} [overrides={}] - page fields to override
+ * @returns {object}
+ */
+export function addPageWithData(project, overrides = {}) {
+  const pageNumber = project.pages.length + 1;
+  const newPage = { ...createDefaultPage(pageNumber), ...overrides, pageNumber };
+  return {
+    ...project,
+    pages: [...project.pages, newPage],
+  };
+}
+
+/**
+ * Adds a new character with default values.
+ * @param {object} project
+ * @returns {object}
+ */
+export function addCharacter(project) {
+  const now = new Date().toISOString();
+  const newCharacter = {
+    id: generateId(),
+    name: '',
+    role: 'Supporting',
+    personality: '',
+    visualDescription: '',
+    voiceNotes: '',
+    createdAt: now,
+    updatedAt: now,
+  };
+  return {
+    ...project,
+    characters: [...project.characters, newCharacter],
+  };
+}
+
+/**
+ * Updates a character by id.
+ * @param {object} project
+ * @param {string} characterId
+ * @param {object} updates
+ * @returns {object}
+ */
+export function updateCharacter(project, characterId, updates) {
+  return {
+    ...project,
+    characters: project.characters.map((c) =>
+      c.id === characterId
+        ? { ...c, ...updates, updatedAt: new Date().toISOString() }
+        : c
+    ),
+  };
+}
+
+/**
+ * Deletes a character by id.
+ * @param {object} project
+ * @param {string} characterId
+ * @returns {object}
+ */
+export function deleteCharacter(project, characterId) {
+  return {
+    ...project,
+    characters: project.characters.filter((c) => c.id !== characterId),
+  };
 }

@@ -6,11 +6,17 @@ import Timeline from './components/Timeline';
 import IllustrationChecklist from './components/IllustrationChecklist';
 import FormattingValidator from './components/FormattingValidator';
 import ProjectSetup from './components/ProjectSetup';
+import StoryTemplateWizard from './components/StoryTemplateWizard';
+import CharacterManager from './components/CharacterManager';
+import InteractiveAudioEngine from './components/InteractiveAudioEngine';
 
 const TABS = [
   { key: 'editor', label: 'Editor' },
   { key: 'checklist', label: 'Checklist' },
+  { key: 'templates', label: 'Templates' },
   { key: 'validator', label: 'Validator' },
+  { key: 'audio', label: 'Audio' },
+  { key: 'characters', label: 'Characters' },
   { key: 'settings', label: 'Settings' },
 ];
 
@@ -25,11 +31,15 @@ export default function App() {
     updateCurrentPage,
     updatePageById,
     addNewPage,
+    addPageWithData,
     deletePage,
     updateMetadata,
     toggleBookMilestone,
     toggleOracleMilestone,
     updateOracleTargetCards,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
     loading,
   } = useProject();
 
@@ -54,8 +64,26 @@ export default function App() {
             onUpdatePage={updatePageById}
           />
         );
+      case 'templates':
+        return (
+          <StoryTemplateWizard
+            onAddPageWithData={addPageWithData}
+            onNavigateToEditor={() => setActiveTab('editor')}
+          />
+        );
       case 'validator':
         return <FormattingValidator project={project} />;
+      case 'audio':
+        return <InteractiveAudioEngine />;
+      case 'characters':
+        return (
+          <CharacterManager
+            characters={project.characters}
+            onAddCharacter={addCharacter}
+            onUpdateCharacter={updateCharacter}
+            onDeleteCharacter={deleteCharacter}
+          />
+        );
       case 'settings':
         return (
           <ProjectSetup
@@ -90,12 +118,12 @@ export default function App() {
         {/* Center column: tab bar + content */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Tab bar */}
-          <div className="flex border-b border-brand-charcoal bg-brand-obsidian px-4">
+          <div className="flex border-b border-brand-charcoal bg-brand-obsidian px-4 overflow-x-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-3 text-sm font-medium transition-colors duration-200 border-b-2 ${
+                className={`px-4 py-3 text-sm font-medium transition-colors duration-200 border-b-2 whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'text-brand-gold border-brand-gold'
                     : 'text-gray-500 hover:text-gray-300 border-transparent'
