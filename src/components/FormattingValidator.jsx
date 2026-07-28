@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { validateProject } from '../lib/validator';
+import StagingBuildMonitor from './StagingBuildMonitor';
 
 const severityOrder = { error: 0, warning: 1, info: 2 };
 
@@ -123,6 +124,9 @@ export default function FormattingValidator({ project }) {
             </div>
           ))}
         </div>
+
+        {/* Staging Build Monitor — project readiness dashboard */}
+        <StagingBuildMonitor project={project} />
       </div>
     </main>
   );

@@ -73,6 +73,25 @@ export default function App() {
   };
 
   const renderTabContent = () => {
+    // Hard gate check: if viewing a gated tab without passing the challenge, block render
+    const activeTabDef = TABS.find((t) => t.key === activeTab);
+    if (activeTabDef?.gated && !gatePassed) {
+      return (
+        <main className="flex-1 flex items-center justify-center bg-brand-obsidian">
+          <div className="text-center px-6">
+            <div className="text-4xl mb-3">🔒</div>
+            <h2 className="text-xl font-semibold text-brand-gold mb-2">
+              Admin Area Locked
+            </h2>
+            <p className="text-gray-500 max-w-md">
+              This section requires adult verification. Click the tab again to
+              unlock.
+            </p>
+          </div>
+        </main>
+      );
+    }
+
     switch (activeTab) {
       case 'editor':
         return (
