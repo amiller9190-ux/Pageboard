@@ -3,8 +3,12 @@ import {
   getProject,
   saveProject,
   addPage as storageAddPage,
+  addPageWithData as storageAddPageWithData,
   updatePage as storageUpdatePage,
   deletePage as storageDeletePage,
+  addCharacter as storageAddCharacter,
+  updateCharacter as storageUpdateCharacter,
+  deleteCharacter as storageDeleteCharacter,
 } from '../lib/storage';
 
 /**
@@ -165,6 +169,48 @@ export function useProject() {
     [updateProject]
   );
 
+  /**
+   * Add a new page with optional data overrides, auto-select it.
+   */
+  const addPageWithData = useCallback(
+    (overrides = {}) => {
+      updateProject((prev) => {
+        const next = storageAddPageWithData(prev, overrides);
+        const newPage = next.pages[next.pages.length - 1];
+        setTimeout(() => setCurrentPageId(newPage.id), 0);
+        return next;
+      });
+    },
+    [updateProject]
+  );
+
+  /**
+   * Add a new blank character.
+   */
+  const addCharacter = useCallback(() => {
+    updateProject((prev) => storageAddCharacter(prev));
+  }, [updateProject]);
+
+  /**
+   * Update a character by id.
+   */
+  const updateCharacter = useCallback(
+    (characterId, updates) => {
+      updateProject((prev) => storageUpdateCharacter(prev, characterId, updates));
+    },
+    [updateProject]
+  );
+
+  /**
+   * Delete a character by id.
+   */
+  const deleteCharacter = useCallback(
+    (characterId) => {
+      updateProject((prev) => storageDeleteCharacter(prev, characterId));
+    },
+    [updateProject]
+  );
+
   // Derived: current page object
   const currentPage = project
     ? project.pages.find((p) => p.id === currentPageId) || null
@@ -182,12 +228,16 @@ export function useProject() {
     updateCurrentPage,
     updatePageById,
     addNewPage,
+    addPageWithData,
     selectPage,
     deletePage: deletePageAndSelect,
     updateMetadata,
     toggleBookMilestone,
     toggleOracleMilestone,
     updateOracleTargetCards,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
     loading: false,
   };
 }
