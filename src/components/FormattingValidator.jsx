@@ -125,8 +125,8 @@ export default function FormattingValidator({ project }) {
           ))}
         </div>
 
-        {/* Staging Build Monitor — project readiness dashboard */}
-        <StagingBuildMonitor project={project} />
+        {/* Staging Build Monitor — live compilation engine */}
+        <StagingBuildMonitor />
       </div>
     </main>
   );
