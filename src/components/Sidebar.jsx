@@ -77,6 +77,16 @@ export default function Sidebar({
           </ul>
         )}
       </nav>
+            <div className="p-4 border-t border-slate-800 mt-auto bg-slate-900/50 rounded-xl m-2 text-center">
+        <p className="text-xs text-slate-400 mb-2 font-medium">Your creative journey of a thousand stories begins here</p>
+        <a 
+          href="https://lemonsqueezy.com" 
+          className="lemonsqueezy-button block w-full bg-amber-500 hover:bg-amber-600 text-black text-center text-xs font-bold py-2 px-3 rounded-lg shadow-md transition-colors"
+        >
+          🚀 Upgrade to Premium
+        </a>
+      </div>
+
     </aside>
   );
 }
